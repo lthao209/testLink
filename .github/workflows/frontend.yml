@@ -24,6 +24,11 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+      - name: Check env
+        run: |
+          echo ${{ secrets.AWS_KEY_ID }}
+          echo ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          
       - uses: chrnorm/deployment-action@releases/v1
         name: Create GitHub deployment
         id: test
