@@ -27,7 +27,6 @@ jobs:
       - name: Check env
         run: |
           echo ${{ secrets.AWS_KEY_ID }}
-          echo ${{ secrets.AWS_SECRET_ACCESS_KEY}}
           
       - uses: chrnorm/deployment-action@releases/v1
         name: Create GitHub deployment
