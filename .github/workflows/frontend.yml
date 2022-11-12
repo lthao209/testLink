@@ -24,7 +24,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-      - uses: chrnorm/deployment-action@releases/v1
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
@@ -33,3 +32,28 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
+      
+      - uses: chrnorm/deployment-action@releases/v1
+        name: Create GitHub deployment
+        id: test
+        with:
+          token: ${{ secrets.TOKEN_GITHUB}}
+          description: 'Preview my app'
+          environment: preview
+          
+      - name: Upload S3
+        id: S3
+        with:
+          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: ${{ secrets.AWS_BUCKET }}
+          source_dir: 'static'
+
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@releases/v1
+        with:
+          token: ${{ secrets.TOKEN_GITHUB }}
+          target_url: http://test-hello-world-bk.s3-website-ap-southeast-1.amazonaws.com/index.html
+          state: 'success'
+          deployment_id: ${{ steps.test.outputs.deployment_id }}
